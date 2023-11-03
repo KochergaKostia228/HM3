@@ -7,28 +7,58 @@ namespace HM3
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void BTAdd_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "txt Files (*.txt)|*.txt";
+            string user = $"{TBName.Text}, {TBSoname.Text}, {TBEmail.Text}, {TBPhone.Text}";
 
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            listUsers.Items.Add(user);
+
+        }
+
+        private void BTEdit_Click(object sender, EventArgs e)
+        {
+            if (listUsers.SelectedItems.Count > 0)
             {
-                string fP = openFileDialog.FileName;
+                string editUser = $"{TBName.Text}, {TBSoname.Text}, {TBEmail.Text}, {TBPhone.Text}";
 
-                string text = File.ReadAllText(fP);
+                int selectedIndex = listUsers.SelectedIndex;
 
-                progressBar1.Maximum = text.Length;
-                progressBar1.Value = 0;
+                listUsers.Items.RemoveAt(selectedIndex);
 
-                textBox1.Text = text;
+                listUsers.Items.Insert(selectedIndex, editUser);
+            }
+        }
 
-                foreach (char c in text)
+        private void BTDelete_Click(object sender, EventArgs e)
+        {
+            if (listUsers.SelectedItems.Count > 0)
+            {
+                listUsers.Items.RemoveAt(listUsers.SelectedIndex);
+            }
+        }
+
+        private void BTImport_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "txt Files (*.txt)|*.txt";
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    progressBar1.Value++;
+                    File.WriteAllLines(saveFileDialog.FileName, listUsers.Items.Cast<string>());
                 }
+            }
+        }
 
-                MessageBox.Show("The text was read successfully");
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "txt Files (*.txt)|*.txt";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string[] s = File.ReadAllLines(openFileDialog.FileName);
+                    listUsers.Items.AddRange(s);
+                }
             }
         }
     }
